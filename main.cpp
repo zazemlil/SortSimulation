@@ -8,7 +8,7 @@ using namespace sf;
 const int WIDTH = 800;
 const int HEIGHT = 600;
 
-class MassiveSort 
+class SortSimulation
 {
 private: 
 	int size;
@@ -41,19 +41,40 @@ private:
 		}
 	}
 
-	void BubleSort()
+	void BubleSort(int reverse)
 	{
-		for (int i = 0; i < 100; i++)
+		if (reverse == 1)
 		{
-			for (int j = i; j < 100; j++)
+			for (int i = 0; i < 100; i++)
 			{
-				if (*(array + i) < *(array + j))
+				for (int j = i; j < 100; j++)
 				{
-					k = *(array + i);
-					*(array + i) = *(array + j);
-					*(array + j) = k;
+
+					if (*(array + i) < *(array + j))
+					{
+						k = *(array + i);
+						*(array + i) = *(array + j);
+						*(array + j) = k;
+					}
+					Draw();
 				}
-				Draw();
+			}
+		}
+		else
+		{
+			for (int i = 0; i < 100; i++)
+			{
+				for (int j = i; j < 100; j++)
+				{
+
+					if (*(array + i) > *(array + j))
+					{
+						k = *(array + i);
+						*(array + i) = *(array + j);
+						*(array + j) = k;
+					}
+					Draw();
+				}
 			}
 		}
 	}
@@ -71,12 +92,12 @@ private:
 		}
 		if (Keyboard::isKeyPressed(Keyboard::Space) && f == 1)
 		{
-			BubleSort();
+			BubleSort(0);
 			f = 0;
 		}
 		if (Keyboard::isKeyPressed(Keyboard::Space) && f == 0)
 		{
-			BubleSort();
+			BubleSort(1);
 			f = 1;
 		}
 	}
@@ -98,7 +119,7 @@ private:
 	}
 public:
 	Sprite sprite;
-	MassiveSort(int* array, int size, float speed, Sprite sprite, RenderWindow* window)
+	SortSimulation(int* array, int size, float speed, Sprite sprite, RenderWindow* window)
 	{
 		this->size = size;
 		this->speed = speed;
@@ -131,11 +152,11 @@ int main()
 	itemSprite.setTexture(itemTexture);
 
 	int size = 100;
-	float speed = 0.000001f;
+	float speed = 0.1f;
 	int* array = new int[size];
 	for (int i = 0; i < size; i++) *(array + i) = rand()%1000;
 
-	MassiveSort massiv(array, size, speed, itemSprite, pwindow);
+	SortSimulation massiv(array, size, speed, itemSprite, pwindow);
 
 	while (window.isOpen())
 	{
@@ -150,4 +171,4 @@ int main()
 	return 0;
 }
 //не могу подобрать разрешение для спрайта
-//сделай сортировку, мб нужны потоки
+//мб нужны потоки
