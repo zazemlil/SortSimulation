@@ -223,6 +223,241 @@ private:
 		}
 	}
 
+	// Merges two subarrays of array[].
+	// First subarray is arr[begin..mid]
+	// Second subarray is arr[mid+1..end]
+	void merge(int reverse, int array[], int const left, int const mid, int const right)
+	{
+		auto const subArrayOne = mid - left + 1;
+		auto const subArrayTwo = right - mid;
+
+		// Create temp arrays
+		auto* leftArray = new int[subArrayOne];
+		auto* rightArray = new int[subArrayTwo];
+
+		// Copy data to temp arrays leftArray[] and rightArray[]
+		for (auto i = 0; i < subArrayOne; i++)
+			leftArray[i] = array[left + i];
+		for (auto j = 0; j < subArrayTwo; j++)
+			rightArray[j] = array[mid + 1 + j];
+
+		auto indexOfSubArrayOne = 0; // Initial index of first sub-array
+		auto indexOfSubArrayTwo = 0; // Initial index of second sub-array
+		int indexOfMergedArray = left; // Initial index of merged array
+
+		if (reverse == 1)
+		{
+			// Merge the temp arrays back into array[left..right]
+			while (indexOfSubArrayOne < subArrayOne && indexOfSubArrayTwo < subArrayTwo)
+			{
+				if (leftArray[indexOfSubArrayOne] <= rightArray[indexOfSubArrayTwo])
+				{
+					array[indexOfMergedArray] = leftArray[indexOfSubArrayOne];
+					indexOfSubArrayOne++;
+					Draw();
+					Timer(speed);
+				}
+				else
+				{
+					array[indexOfMergedArray] = rightArray[indexOfSubArrayTwo];
+					indexOfSubArrayTwo++;
+					Draw();
+					Timer(speed);
+				}
+				indexOfMergedArray++;
+			}
+			// Copy the remaining elements of
+			// left[], if there are any
+			while (indexOfSubArrayOne < subArrayOne)
+			{
+				array[indexOfMergedArray] = leftArray[indexOfSubArrayOne];
+				indexOfSubArrayOne++;
+				indexOfMergedArray++;
+				Draw();
+				Timer(speed);
+			}
+			// Copy the remaining elements of
+			// right[], if there are any
+			while (indexOfSubArrayTwo < subArrayTwo)
+			{
+				array[indexOfMergedArray] = rightArray[indexOfSubArrayTwo];
+				indexOfSubArrayTwo++;
+				indexOfMergedArray++;
+				Draw();
+				Timer(speed);
+			}
+		}
+		else
+		{
+			// Merge the temp arrays back into array[left..right]
+			while (indexOfSubArrayOne < subArrayOne && indexOfSubArrayTwo < subArrayTwo)
+			{
+				if (leftArray[indexOfSubArrayOne] >= rightArray[indexOfSubArrayTwo])
+				{
+					array[indexOfMergedArray] = leftArray[indexOfSubArrayOne];
+					indexOfSubArrayOne++;
+					Draw();
+					Timer(speed);
+				}
+				else
+				{
+					array[indexOfMergedArray] = rightArray[indexOfSubArrayTwo];
+					indexOfSubArrayTwo++;
+					Draw();
+					Timer(speed);
+				}
+				indexOfMergedArray++;
+			}
+			// Copy the remaining elements of
+			// left[], if there are any
+			while (indexOfSubArrayOne < subArrayOne)
+			{
+				array[indexOfMergedArray] = leftArray[indexOfSubArrayOne];
+				indexOfSubArrayOne++;
+				indexOfMergedArray++;
+				Draw();
+				Timer(speed);
+			}
+			// Copy the remaining elements of
+			// right[], if there are any
+			while (indexOfSubArrayTwo < subArrayTwo)
+			{
+				array[indexOfMergedArray] = rightArray[indexOfSubArrayTwo];
+				indexOfSubArrayTwo++;
+				indexOfMergedArray++;
+				Draw();
+				Timer(speed);
+			}
+		}
+		delete[] leftArray;
+		delete[] rightArray;
+	}
+
+	// begin is for left index and end is
+	// right index of the sub-array
+	// of arr to be sorted */
+	void MergeSort(int reverse, int array[], int const begin, int const end)
+	{
+		if (begin >= end)
+			return; // Returns recursively
+
+		auto mid = begin + (end - begin) / 2;
+		MergeSort(reverse, array, begin, mid);
+		MergeSort(reverse, array, mid + 1, end);
+		merge(reverse, array, begin, mid, end);
+	}
+
+	void CocktailSort(int reverse, int a[], int n)
+	{
+		bool swapped = true;
+		int start = 0;
+		int end = n - 1;
+
+		while (swapped) {
+			// reset the swapped flag on entering
+			// the loop, because it might be true from
+			// a previous iteration.
+			swapped = false;
+
+			// loop from left to right same as
+			// the bubble sort
+			if (reverse == 0)
+			{
+				for (int i = start; i < end; ++i) {
+					if (a[i] > a[i + 1]) {
+						std::swap(a[i], a[i + 1]);
+						swapped = true;
+						Draw();
+						Timer(speed);
+					}
+				}
+			}
+			else
+			{
+				for (int i = start; i < end; ++i) {
+					if (a[i] < a[i + 1]) {
+						std::swap(a[i], a[i + 1]);
+						swapped = true;
+						Draw();
+						Timer(speed);
+					}
+				}
+			}
+			// if nothing moved, then array is sorted.
+			if (!swapped)
+				break;
+
+			// otherwise, reset the swapped flag so that it
+			// can be used in the next stage
+			swapped = false;
+
+			// move the end point back by one, because
+			// item at the end is in its rightful spot
+			--end;
+
+			// from right to left, doing the
+			// same comparison as in the previous stage
+			if (reverse == 0)
+			{
+				for (int i = end - 1; i >= start; --i) {
+					if (a[i] > a[i + 1]) {
+						std::swap(a[i], a[i + 1]);
+						swapped = true;
+						Draw();
+						Timer(speed);
+					}
+				}
+			}
+			else
+			{
+				for (int i = end - 1; i >= start; --i) {
+					if (a[i] < a[i + 1]) {
+						std::swap(a[i], a[i + 1]);
+						swapped = true;
+						Draw();
+						Timer(speed);
+					}
+				}
+			}
+			// increase the starting point, because
+			// the last stage would have moved the next
+			// smallest number to its rightful spot.
+			++start;
+		}
+	}
+
+	bool isSorted(int reverse, int a[], int n)
+	{
+		while (--n > 0)
+			if (reverse == 0)
+			{
+				if (a[n] < a[n - 1])
+					return false;
+			}
+			else
+			{
+				if (a[n] > a[n - 1])
+					return false;
+			}
+		return true;
+	}
+
+	void shuffle(int a[], int n)
+	{
+		for (int i = 0; i < n; i++)
+		{
+			std::swap(a[i], a[rand() % n]);
+			Draw();
+			Timer(speed);
+		}
+	}
+
+	void BogoSort(int reverse, int a[], int n)
+	{
+		while (!isSorted(reverse, a, n))
+			shuffle(a, n);
+	}
+
 	void Controller()
 	{
 		if (Keyboard::isKeyPressed(Keyboard::LShift))
@@ -241,7 +476,10 @@ private:
 			//BubbleSort(0);
 			//ChoiceSort(0);
 			//QuickSort(0, 0, size);
-			HeapSort(0, array, size);
+			//HeapSort(0, array, size);
+			//MergeSort(0, array, 0, size-1);
+			CocktailSort(0, array, size);
+			//BogoSort(0, array, size);
 			f = 0;
 			Timer(0.000001f);
 		}
@@ -250,7 +488,10 @@ private:
 			//BubbleSort(1);
 			//ChoiceSort(1);
 			//QuickSort(1, 0, size);
-			HeapSort(1, array, size);
+			//HeapSort(1, array, size);
+			//MergeSort(1, array, 0, size-1);
+			CocktailSort(1, array, size);
+			//BogoSort(1, array, size);
 			f = 1;
 			Timer(0.000001f);
 		}
@@ -307,7 +548,7 @@ int main()
 	itemSprite.setTexture(itemTexture);
 	
 
-	int size = 500;
+	int size = 250;
 	float speed = 2.5f;
 	int* array = new int[size];
 	for (int i = 0; i < size; i++) *(array + i) = rand()%10000;
