@@ -42,7 +42,7 @@ private:
 		}
 	}
 
-	void BubleSort(int reverse)
+	void BubbleSort(int reverse)
 	{
 		if (reverse == 1)
 		{
@@ -167,7 +167,6 @@ private:
 				Timer(speed);
 			}
 		}
-		
 		return pivot;
 	}
 
@@ -231,14 +230,15 @@ private:
 			srand(std::time(NULL));
 			for (int i = 0; i < size; i++)
 			{
-				*(array + i) = rand() % 1000;
+				*(array + i) = rand() % 10000;
 			}
 			maxelem = MaxOfArray(array, size);
+			sizeofitemY = float(maxelem) / float(HEIGHT - sizeofheaderY);
 			Draw();
 		}
 		if (Keyboard::isKeyPressed(Keyboard::Space) && f == 1)
 		{
-			//BubleSort(0);
+			//BubbleSort(0);
 			//ChoiceSort(0);
 			//QuickSort(0, 0, size);
 			HeapSort(0, array, size);
@@ -247,7 +247,7 @@ private:
 		}
 		if (Keyboard::isKeyPressed(Keyboard::Space) && f == 0)
 		{
-			//BubleSort(1);
+			//BubbleSort(1);
 			//ChoiceSort(1);
 			//QuickSort(1, 0, size);
 			HeapSort(1, array, size);
@@ -260,11 +260,11 @@ private:
 	void Draw()
 	{
 		window->clear(sf::Color::Cyan);
-		sprite.setScale(Vector2f(sizeofitemX / 12.f, float(HEIGHT)));
+		sprite.setScale(Vector2f(sizeofitemX / 25.f, float(HEIGHT)));
 		Vector2f v = sprite.getScale();;
 		for (int i = 0; i < size; i++)
 		{
-			sprite.setPosition(float(i) * v.x * 12.f, float(HEIGHT) - *(array + i) / sizeofitemY);
+			sprite.setPosition(float(i) * v.x * 25.f, float(HEIGHT) - *(array + i) / sizeofitemY);
 			window->draw(sprite);
 		}
 		window->display();
@@ -296,7 +296,7 @@ public:
 
 int main()
 {
-	RenderWindow window(VideoMode(WIDTH, HEIGHT), "main");
+	RenderWindow window(VideoMode(WIDTH, HEIGHT), "SortSimulation");
 	RenderWindow* pwindow = &window;
 
 	Image itemImg;
@@ -310,7 +310,7 @@ int main()
 	int size = 500;
 	float speed = 2.5f;
 	int* array = new int[size];
-	for (int i = 0; i < size; i++) *(array + i) = rand()%1000;
+	for (int i = 0; i < size; i++) *(array + i) = rand()%10000;
 
 	SortSimulation massiv(array, size, speed, itemSprite, pwindow);
 	window.setActive(false);
