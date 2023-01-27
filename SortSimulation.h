@@ -14,10 +14,20 @@ private:
 	float sizeofitemX, sizeofitemY;
 	int maxelem;
 	int k, f = 1;
-	float sizeofheaderX = 0.f, sizeofheaderY = 0.f;
+	float sizeofheaderX, sizeofheaderY;
 	RenderWindow* window;
 	int WIDTH, HEIGHT;
+	std::atomic<bool>* pause;
+	int* control;
 	Sprite sprite;
+	int* sortNumber;
+
+	int MaxOfArray(int* array, int size);
+	void Timer(float speed);
+	void Controller();
+	void Pause();
+	void Draw();
+	bool RestartSort();
 
 	void BubbleSort(int reverse);
 
@@ -38,13 +48,11 @@ private:
 	void shuffle(int a[], int n);
 	void BogoSort(int reverse, int a[], int n);
 
-
-	int MaxOfArray(int* array, int size);
-	void Timer(float speed);
-	void Controller();
-	void Draw();
-
 public:
-	SortSimulation(int* array, int size, float speed, Sprite sprite, RenderWindow* window, int WIDTH, int HEIGHT);
+	SortSimulation(int* array, int size, float speed, Sprite sprite, RenderWindow* window, int WIDTH, int HEIGHT, std::atomic<bool>* pause, int* control, int* sortNumber);
 	void update();
+	void setSizeOfHeaderX(float X);
+	void setSizeOfHeaderY(float Y);
+	float getSizeOfHeaderX();
+	float getSizeOfHeaderY();
 };

@@ -1,6 +1,6 @@
 #include "SortSimulation.h"
 
-SortSimulation::SortSimulation(int* array, int size, float speed, Sprite sprite, RenderWindow* window, int WIDTH, int HEIGHT)
+SortSimulation::SortSimulation(int* array, int size, float speed, Sprite sprite, RenderWindow* window, int WIDTH, int HEIGHT, std::atomic<bool>* pause, int* control, int* sortNumber)
 {
 	this->WIDTH = WIDTH;
 	this->HEIGHT = HEIGHT;
@@ -10,6 +10,11 @@ SortSimulation::SortSimulation(int* array, int size, float speed, Sprite sprite,
 	this->sprite = sprite;
 	this->sprite.setTextureRect(IntRect(300, 0, 10, 600));
 	this->window = window;
+	this->pause = pause;
+	this->control = control;
+	this->sortNumber = sortNumber;
+	sizeofheaderX = 0.f;
+	sizeofheaderY = 0.f;
 	maxelem = MaxOfArray(array, size);
 	sizeofitemX = float(WIDTH - sizeofheaderX) / float(size);
 	sizeofitemY = float(maxelem) / float(HEIGHT - sizeofheaderY);
@@ -18,8 +23,10 @@ SortSimulation::SortSimulation(int* array, int size, float speed, Sprite sprite,
 void SortSimulation::Draw()
 {
 	window->clear(sf::Color::Cyan);
+	sizeofitemX = float(WIDTH - sizeofheaderX) / float(size);
+	sizeofitemY = float(maxelem) / float(HEIGHT - sizeofheaderY);
 	sprite.setScale(Vector2f(sizeofitemX / 25.f, float(HEIGHT)));
-	Vector2f v = sprite.getScale();;
+	Vector2f v = sprite.getScale();
 	for (int i = 0; i < size; i++)
 	{
 		sprite.setPosition(float(i) * v.x * 25.f, float(HEIGHT) - *(array + i) / sizeofitemY);
@@ -34,7 +41,15 @@ void SortSimulation::update()
 	{
 		Controller();
 	}
-	return;
+}
+
+void SortSimulation::Pause()
+{
+	while (*pause)
+	{
+		std::this_thread::yield();
+		Draw();
+	}
 }
 
 int SortSimulation::MaxOfArray(int* array, int size)
@@ -59,6 +74,35 @@ void SortSimulation::Timer(float speed)
 	}
 }
 
+void SortSimulation::setSizeOfHeaderX(float X)
+{
+	//if (this->sizeofheaderX < 300 && this->sizeofheaderX < 0)
+		this->sizeofheaderX += X * float(WIDTH) / 1800.f;
+}
+
+void SortSimulation::setSizeOfHeaderY(float Y)
+{
+	//if (this->sizeofheaderY < 300 && this->sizeofheaderY < 0)
+		this->sizeofheaderY += Y * float(HEIGHT) / 1800.f;
+}
+
+float SortSimulation::getSizeOfHeaderX()
+{
+	return sizeofheaderX;
+}
+
+float SortSimulation::getSizeOfHeaderY()
+{
+	return sizeofheaderY;
+}
+
+bool SortSimulation::RestartSort()
+{
+	if (*control == 2)
+		return true;
+	return false;
+}
+
 void SortSimulation::BubbleSort(int reverse)
 {
 	if (reverse == 1)
@@ -75,6 +119,8 @@ void SortSimulation::BubbleSort(int reverse)
 				}
 				Draw();
 				Timer(speed);
+				Pause();
+				if (RestartSort()) return;
 			}
 		}
 	}
@@ -93,6 +139,8 @@ void SortSimulation::BubbleSort(int reverse)
 				}
 				Draw();
 				Timer(speed);
+				Pause();
+				if (RestartSort()) return;
 			}
 		}
 	}
@@ -114,6 +162,8 @@ void SortSimulation::ChoiceSort(int reverse)
 				}
 				Draw();
 				Timer(speed);
+				Pause();
+				if (RestartSort()) return;
 			}
 			kk = *(array + i);
 			*(array + i) = *(array + mn);
@@ -133,6 +183,8 @@ void SortSimulation::ChoiceSort(int reverse)
 				}
 				Draw();
 				Timer(speed);
+				Pause();
+				if (RestartSort()) return;
 			}
 			kk = *(array + i);
 			*(array + i) = *(array + mn);
@@ -162,6 +214,8 @@ int SortSimulation::partition(int reverse, int start, int pivot)
 			else i++;
 			Draw();
 			Timer(speed);
+			Pause();
+			if (RestartSort()) return -1;
 		}
 	}
 	else
@@ -182,6 +236,8 @@ int SortSimulation::partition(int reverse, int start, int pivot)
 			else i++;
 			Draw();
 			Timer(speed);
+			Pause();
+			if (RestartSort()) return -1;
 		}
 	}
 	return pivot;
@@ -192,7 +248,7 @@ void SortSimulation::QuickSort(int reverse, int start, int end)
 	if (start < end)
 	{
 		int pivot = partition(reverse, start, end);
-
+		if (pivot == -1) return;
 		QuickSort(reverse, start, pivot - 1);
 		QuickSort(reverse, pivot + 1, end);
 	}
@@ -226,6 +282,8 @@ void SortSimulation::heapify(int reverse, int list[], int listLength, int root)
 	}
 	Draw();
 	Timer(speed);
+	Pause();
+	if (RestartSort()) return;
 }
 
 void SortSimulation::HeapSort(int reverse, int list[], int listLength)
@@ -257,7 +315,7 @@ void SortSimulation::merge(int reverse, int array[], int const left, int const m
 	auto indexOfSubArrayTwo = 0; 
 	int indexOfMergedArray = left; 
 
-	if (reverse == 1)
+	if (reverse == 0)
 	{
 		while (indexOfSubArrayOne < subArrayOne && indexOfSubArrayTwo < subArrayTwo)
 		{
@@ -267,6 +325,8 @@ void SortSimulation::merge(int reverse, int array[], int const left, int const m
 				indexOfSubArrayOne++;
 				Draw();
 				Timer(speed);
+				Pause();
+				if (RestartSort()) return;
 			}
 			else
 			{
@@ -274,6 +334,8 @@ void SortSimulation::merge(int reverse, int array[], int const left, int const m
 				indexOfSubArrayTwo++;
 				Draw();
 				Timer(speed);
+				Pause();
+				if (RestartSort()) return;
 			}
 			indexOfMergedArray++;
 		}
@@ -284,6 +346,8 @@ void SortSimulation::merge(int reverse, int array[], int const left, int const m
 			indexOfMergedArray++;
 			Draw();
 			Timer(speed);
+			Pause();
+			if (RestartSort()) return;
 		}
 		while (indexOfSubArrayTwo < subArrayTwo)
 		{
@@ -292,6 +356,8 @@ void SortSimulation::merge(int reverse, int array[], int const left, int const m
 			indexOfMergedArray++;
 			Draw();
 			Timer(speed);
+			Pause();
+			if (RestartSort()) return;
 		}
 	}
 	else
@@ -304,6 +370,8 @@ void SortSimulation::merge(int reverse, int array[], int const left, int const m
 				indexOfSubArrayOne++;
 				Draw();
 				Timer(speed);
+				Pause();
+				if (RestartSort()) return;
 			}
 			else
 			{
@@ -311,6 +379,8 @@ void SortSimulation::merge(int reverse, int array[], int const left, int const m
 				indexOfSubArrayTwo++;
 				Draw();
 				Timer(speed);
+				Pause();
+				if (RestartSort()) return;
 			}
 			indexOfMergedArray++;
 		}
@@ -321,6 +391,8 @@ void SortSimulation::merge(int reverse, int array[], int const left, int const m
 			indexOfMergedArray++;
 			Draw();
 			Timer(speed);
+			Pause();
+			if (RestartSort()) return;
 		}
 		while (indexOfSubArrayTwo < subArrayTwo)
 		{
@@ -329,6 +401,8 @@ void SortSimulation::merge(int reverse, int array[], int const left, int const m
 			indexOfMergedArray++;
 			Draw();
 			Timer(speed);
+			Pause();
+			if (RestartSort()) return;
 		}
 	}
 	delete[] leftArray;
@@ -364,6 +438,8 @@ void SortSimulation::CocktailSort(int reverse, int a[], int n)
 					swapped = true;
 					Draw();
 					Timer(speed);
+					Pause();
+					if (RestartSort()) return;
 				}
 			}
 		}
@@ -375,6 +451,8 @@ void SortSimulation::CocktailSort(int reverse, int a[], int n)
 					swapped = true;
 					Draw();
 					Timer(speed);
+					Pause();
+					if (RestartSort()) return;
 				}
 			}
 		}
@@ -393,6 +471,8 @@ void SortSimulation::CocktailSort(int reverse, int a[], int n)
 					swapped = true;
 					Draw();
 					Timer(speed);
+					Pause();
+					if (RestartSort()) return;
 				}
 			}
 		}
@@ -404,6 +484,8 @@ void SortSimulation::CocktailSort(int reverse, int a[], int n)
 					swapped = true;
 					Draw();
 					Timer(speed);
+					Pause();
+					if (RestartSort()) return;
 				}
 			}
 		}
@@ -434,6 +516,8 @@ void SortSimulation::shuffle(int a[], int n)
 		std::swap(a[i], a[rand() % n]);
 		Draw();
 		Timer(speed);
+		Pause();
+		if (RestartSort()) return;
 	}
 }
 
@@ -445,7 +529,86 @@ void SortSimulation::BogoSort(int reverse, int a[], int n)
 
 void SortSimulation::Controller()
 {
-	if (Keyboard::isKeyPressed(Keyboard::LShift))
+	switch (*control)
+	{
+	case 1:
+	{
+		if (f == 0)
+		{
+			switch (*sortNumber)
+			{
+			case 1:
+				BubbleSort(1);
+				break;
+			case 2:
+				ChoiceSort(1);
+				break;
+			case 3:
+				QuickSort(1, 0, size);
+				break;
+			case 4:
+				HeapSort(1, array, size);
+				break;
+			case 5:
+				MergeSort(1, array, 0, size - 1);
+				break;
+			case 6:
+				CocktailSort(1, array, size);
+				break;
+			case 7:
+				BogoSort(1, array, size);
+				break;
+			}
+			//BubbleSort(1);
+			//ChoiceSort(1);
+			//QuickSort(1, 0, size);
+			//HeapSort(1, array, size);
+			//MergeSort(1, array, 0, size-1);
+			//CocktailSort(1, array, size);
+			//BogoSort(1, array, size);
+			f = 1;
+			Timer(0.000001f);
+		}
+		else
+		{
+			switch (*sortNumber)
+			{
+			case 1:
+				BubbleSort(0);
+				break;
+			case 2:
+				ChoiceSort(0);
+				break;
+			case 3:
+				QuickSort(0, 0, size);
+				break;
+			case 4:
+				HeapSort(0, array, size);
+				break;
+			case 5:
+				MergeSort(0, array, 0, size - 1);
+				break;
+			case 6:
+				CocktailSort(0, array, size);
+				break;
+			case 7:
+				BogoSort(0, array, size);
+				break;
+			}
+			//BubbleSort(0);
+			//ChoiceSort(0);
+			//QuickSort(0, 0, size);
+			//HeapSort(0, array, size);
+			//MergeSort(0, array, 0, size-1);
+			//CocktailSort(0, array, size);
+			//BogoSort(0, array, size);
+			f = 0;
+			Timer(0.000001f);
+		}
+		*control = 0;
+		break;
+	}
+	case 2:
 	{
 		srand(std::time(NULL));
 		for (int i = 0; i < size; i++)
@@ -455,31 +618,10 @@ void SortSimulation::Controller()
 		maxelem = MaxOfArray(array, size);
 		sizeofitemY = float(maxelem) / float(HEIGHT - sizeofheaderY);
 		Draw();
+		*control = 0;
+		break;
 	}
-	if (Keyboard::isKeyPressed(Keyboard::Space) && f == 1)
-	{
-		//BubbleSort(0);
-		//ChoiceSort(0);
-		//QuickSort(0, 0, size);
-		//HeapSort(0, array, size);
-		MergeSort(0, array, 0, size-1);
-		//CocktailSort(0, array, size);
-		//BogoSort(0, array, size);
-		f = 0;
-		Timer(0.000001f);
-	}
-	if (Keyboard::isKeyPressed(Keyboard::Space) && f == 0)
-	{
-		//BubbleSort(1);
-		//ChoiceSort(1);
-		//QuickSort(1, 0, size);
-		//HeapSort(1, array, size);
-		MergeSort(1, array, 0, size-1);
-		//CocktailSort(1, array, size);
-		//BogoSort(1, array, size);
-		f = 1;
-		Timer(0.000001f);
 	}
 	Draw();
+	Pause();
 }
-
