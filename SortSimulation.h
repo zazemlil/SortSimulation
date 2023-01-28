@@ -21,6 +21,7 @@ private:
 	int* control;
 	Sprite sprite;
 	int* sortNumber;
+	Vector2i offset;
 
 	int MaxOfArray(int* array, int size);
 	void Timer(float speed);
@@ -36,7 +37,7 @@ private:
 	int partition(int reverse, int start, int pivot);
 	void QuickSort(int reverse, int start, int end);
 
-	void heapify(int reverse, int list[], int listLength, int root);
+	int heapify(int reverse, int list[], int listLength, int root);
 	void HeapSort(int reverse, int list[], int listLength);
 
 	void merge(int reverse, int array[], int const left, int const mid, int const right);
@@ -45,7 +46,7 @@ private:
 	void CocktailSort(int reverse, int a[], int n);
 
 	bool isSorted(int reverse, int a[], int n);
-	void shuffle(int a[], int n);
+	int shuffle(int a[], int n);
 	void BogoSort(int reverse, int a[], int n);
 
 public:
@@ -55,4 +56,6 @@ public:
 	void setSizeOfHeaderY(float Y);
 	float getSizeOfHeaderX();
 	float getSizeOfHeaderY();
+	void setOffset(Vector2i offset);
+	Vector2i getOffset();
 };

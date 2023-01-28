@@ -37,7 +37,8 @@ int main()
 	window.setActive(false);
 	std::thread t(&SortSimulation::update, &massiv);
 
-	Menu menu(&massiv);
+	Menu menu(pwindow, &massiv);
+	std::thread mn(&Menu::update, &menu);
 
 	while (window.isOpen())
 	{
@@ -50,12 +51,12 @@ int main()
 			}
 			if (event.mouseWheel.delta == 1 || Keyboard::isKeyPressed(Keyboard::Equal))
 			{
-				menu.foo(-50.f, -50.f);
+				menu.ChangeSize(-50.f, -50.f);
 				continue;
 			}
 			if (event.mouseWheel.delta == -1 || Keyboard::isKeyPressed(Keyboard::Hyphen))
 			{
-				menu.foo(50.f, 50.f);
+				menu.ChangeSize(50.f, 50.f);
 				continue;
 			}
 		}
@@ -115,7 +116,10 @@ int main()
 			continue;
 		}
 	}
+	mn.join();
 	t.join();
 	return 0;
 }
+// сделать нормальный размер по высоте
 // нужно сделать меню выбора сортировки 
+// немного криво масштабируетс€ после уменьшени€(сверху зазор)

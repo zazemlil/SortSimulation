@@ -4,11 +4,19 @@
 #include <iostream>
 #include "SortSimulation.h"
 
+using namespace sf;
+
 class Menu
 {
 private:
 	SortSimulation* pSimulation;
+	Window* window;
+
+	void Move();
+	void toCenter();
+
 public:
-	void foo(float X, float Y);
-	Menu(SortSimulation* pSimulation);
+	Menu(Window* window, SortSimulation* pSimulation);
+	void ChangeSize(float X, float Y);
+	void update();
 };
