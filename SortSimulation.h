@@ -17,11 +17,12 @@ private:
 	float sizeofheaderX, sizeofheaderY;
 	RenderWindow* window;
 	int WIDTH, HEIGHT;
-	std::atomic<bool>* pause;
+	bool* pause;
 	int* control;
 	Sprite sprite;
 	int* sortNumber;
-	Vector2i offset;
+	Vector2f offset;
+
 
 	int MaxOfArray(int* array, int size);
 	void Timer(float speed);
@@ -29,6 +30,7 @@ private:
 	void Pause();
 	void Draw();
 	bool RestartSort();
+	
 
 	void BubbleSort(int reverse);
 
@@ -50,12 +52,14 @@ private:
 	void BogoSort(int reverse, int a[], int n);
 
 public:
-	SortSimulation(int* array, int size, float speed, Sprite sprite, RenderWindow* window, int WIDTH, int HEIGHT, std::atomic<bool>* pause, int* control, int* sortNumber);
+	SortSimulation(int* array, int size, float speed, Sprite sprite, RenderWindow* window, int WIDTH, int HEIGHT, bool* pause, int* control, int* sortNumber);
 	void update();
 	void setSizeOfHeaderX(float X);
 	void setSizeOfHeaderY(float Y);
 	float getSizeOfHeaderX();
 	float getSizeOfHeaderY();
-	void setOffset(Vector2i offset);
-	Vector2i getOffset();
+	void setOffset(Vector2f offset);
+	int getNumberOfSort();
+	Vector2f getOffset();
+	Vector2f getResolution();
 };

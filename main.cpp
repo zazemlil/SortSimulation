@@ -3,18 +3,19 @@
 #include <iostream>
 #include "SortSimulation.h"
 #include "Menu.h"
-#include <atomic>
 
 using namespace sf;
 
 const int WIDTH = 1200;
 const int HEIGHT = 800;
 
-
 int main()
 {
-	RenderWindow window(VideoMode(WIDTH, HEIGHT), "SortSimulation");
+	RenderWindow window(VideoMode(WIDTH, HEIGHT), "SortSimulation", Style::Default);
 	RenderWindow* pwindow = &window;
+
+	//window.setVerticalSyncEnabled(true);
+	//window.setFramerateLimit(240);
 
 	Image itemImg;
 	itemImg.loadFromFile("line.png");
@@ -29,7 +30,7 @@ int main()
 	int* array = new int[size];
 	for (int i = 0; i < size; i++) *(array + i) = rand()%10000;
 
-	std::atomic<bool> pause(false);
+	bool pause = false;
 	int control = 0;
 	int sortNumber = 0;
 	SortSimulation massiv(array, size, speed, itemSprite, pwindow, WIDTH, HEIGHT, &pause, &control, &sortNumber);
@@ -39,7 +40,7 @@ int main()
 
 	Menu menu(pwindow, &massiv);
 	std::thread mn(&Menu::update, &menu);
-
+	
 	while (window.isOpen())
 	{
 		Event event;
@@ -48,13 +49,15 @@ int main()
 			if (event.type == Event::Closed)
 			{
 				window.close();
+				mn.join();
+				t.join();
 			}
-			if (event.mouseWheel.delta == 1 || Keyboard::isKeyPressed(Keyboard::Equal))
+			if ((event.mouseWheel.delta == 1 || Keyboard::isKeyPressed(Keyboard::Equal)) && Mouse::getPosition(window).x > 2)
 			{
 				menu.ChangeSize(-50.f, -50.f);
 				continue;
 			}
-			if (event.mouseWheel.delta == -1 || Keyboard::isKeyPressed(Keyboard::Hyphen))
+			if ((event.mouseWheel.delta == -1 || Keyboard::isKeyPressed(Keyboard::Hyphen)) && Mouse::getPosition(window).x > 2)
 			{
 				menu.ChangeSize(50.f, 50.f);
 				continue;
@@ -116,10 +119,10 @@ int main()
 			continue;
 		}
 	}
-	mn.join();
-	t.join();
+	//mn.join();
+	//t.join();
 	return 0;
 }
 // сделать нормальный размер по высоте
 // нужно сделать меню выбора сортировки 
-// немного криво масштабируется после уменьшения(сверху зазор)
+// чет не получается вывести текст

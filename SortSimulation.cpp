@@ -1,6 +1,6 @@
 #include "SortSimulation.h"
 
-SortSimulation::SortSimulation(int* array, int size, float speed, Sprite sprite, RenderWindow* window, int WIDTH, int HEIGHT, std::atomic<bool>* pause, int* control, int* sortNumber)
+SortSimulation::SortSimulation(int* array, int size, float speed, Sprite sprite, RenderWindow* window, int WIDTH, int HEIGHT, bool* pause, int* control, int* sortNumber)
 {
 	this->WIDTH = WIDTH;
 	this->HEIGHT = HEIGHT;
@@ -27,7 +27,7 @@ void SortSimulation::Draw()
 	window->clear(sf::Color::Cyan);
 	sizeofitemX = float(WIDTH - sizeofheaderX) / float(size);
 	sizeofitemY = float(maxelem) / float(HEIGHT - sizeofheaderY);
-	sprite.setScale(Vector2f(sizeofitemX / 25.f, float(HEIGHT)));
+	sprite.setScale(Vector2f(sizeofitemX / 25.f, sizeofitemY / 9.34f));
 	Vector2f v = sprite.getScale();
 	for (int i = 0; i < size; i++)
 	{
@@ -36,6 +36,7 @@ void SortSimulation::Draw()
 	}
 	window->display();
 }
+
 
 void SortSimulation::update()
 {
@@ -98,14 +99,19 @@ float SortSimulation::getSizeOfHeaderY()
 	return sizeofheaderY;
 }
 
-void SortSimulation::setOffset(Vector2i offset)
+void SortSimulation::setOffset(Vector2f offset)
 {
 	this->offset = offset;
 }
 
-Vector2i SortSimulation::getOffset()
+Vector2f SortSimulation::getOffset()
 {
 	return offset;
+}
+
+int SortSimulation::getNumberOfSort()
+{
+	return *sortNumber;
 }
 
 bool SortSimulation::RestartSort()
@@ -113,6 +119,12 @@ bool SortSimulation::RestartSort()
 	if (*control == 2)
 		return true;
 	return false;
+}
+
+Vector2f SortSimulation::getResolution()
+{
+	Vector2f vec(WIDTH, HEIGHT);
+	return vec;
 }
 
 void SortSimulation::BubbleSort(int reverse)
