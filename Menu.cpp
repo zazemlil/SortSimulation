@@ -14,9 +14,9 @@ void Menu::Move()
 	{
 		Vector2f mouseVec = window->mapPixelToCoords(Mouse::getPosition());
 		Vector2f windowVec = window->mapPixelToCoords(window->getPosition());
-		if (windowVec.x < mouseVec.x && windowVec.x + pSimulation->getResolution().x + 30 > mouseVec.x) // window->getSize().x
+		if (windowVec.x < mouseVec.x && windowVec.x + pSimulation->getResolution().x + 30 > mouseVec.x)
 		{
-			if (windowVec.y < mouseVec.y && windowVec.y + pSimulation->getResolution().y + 30 > mouseVec.y) // window->getSize().y
+			if (windowVec.y < mouseVec.y && windowVec.y + pSimulation->getResolution().y + 30 > mouseVec.y)
 			{
 				pixelPos2 = window->mapPixelToCoords(Mouse::getPosition(*window)) - pixelPos1;
 				pSimulation->setOffset(pixelPos2);
@@ -35,49 +35,34 @@ void Menu::toCenter()
 
 void Menu::NameOfSort()
 {
-	//Mutex mute;
-	Font font;
-	font.loadFromFile("font.ttf");
-	Text text;
-	text.setFont(font);
-	text.setCharacterSize(30);
-	//text.setColor(Color::Red);
-	text.setStyle(sf::Text::Bold | sf::Text::Underlined);
-
 	switch (pSimulation->getNumberOfSort())
 	{
 	case 1:
-		text.setString("11111111111");
+		text.setString("Bubble Sort");
 		break;
 	case 2:
-		text.setString("22222222222");
+		text.setString("Choice Sort");
 		break;
 	case 3:
-		text.setString("33333333333");
+		text.setString("Quick Sort");
 		break;
 	case 4:
-		text.setString("44444444444");
+		text.setString("Heap Sort");
 		break;
 	case 5:
-		text.setString("55555555555");
+		text.setString("Merge Sort");
 		break;
 	case 6:
-		text.setString("66666666666");
+		text.setString("Cocktail Sort");
 		break;
 	case 7:
-		text.setString("77777777777");
+		text.setString("Random sorting(");
 		break;
 	default:
-		text.setString("00000000000");
+		text.setString("NaN");
 		break;
 	}
-	text.setPosition(500, 500);
-	//mute.lock();
-	//window->setActive(true);
-	//window->draw(text);
-	//window->display();
-	//window->setActive(false);
-	//mute.unlock();
+	pSimulation->setText(text.getString());
 }
 
 Menu::Menu(RenderWindow* window, SortSimulation* pSimulation)

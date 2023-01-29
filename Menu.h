@@ -12,6 +12,7 @@ class Menu
 private:
 	SortSimulation* pSimulation;
 	RenderWindow* window;
+	Text text;
 
 	void Move();
 	void toCenter();

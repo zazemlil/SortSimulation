@@ -11,11 +11,10 @@ const int HEIGHT = 800;
 
 int main()
 {
-	RenderWindow window(VideoMode(WIDTH, HEIGHT), "SortSimulation", Style::Default);
+	ContextSettings settings;
+	settings.antialiasingLevel = 4;
+	RenderWindow window(VideoMode(WIDTH, HEIGHT), "SortSimulation", Style::Default, settings);
 	RenderWindow* pwindow = &window;
-
-	//window.setVerticalSyncEnabled(true);
-	//window.setFramerateLimit(240);
 
 	Image itemImg;
 	itemImg.loadFromFile("line.png");
@@ -24,7 +23,6 @@ int main()
 	Sprite itemSprite;
 	itemSprite.setTexture(itemTexture);
 	
-
 	int size = 200;
 	float speed = 2.5f;
 	int* array = new int[size];
@@ -119,10 +117,5 @@ int main()
 			continue;
 		}
 	}
-	//mn.join();
-	//t.join();
 	return 0;
 }
-// сделать нормальный размер по высоте
-// нужно сделать меню выбора сортировки 
-// чет не получается вывести текст

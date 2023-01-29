@@ -2,6 +2,7 @@
 #include <SFML/Graphics.hpp>
 #include <thread>
 #include <iostream>
+#include <mutex>
 
 using namespace sf;
 
@@ -22,7 +23,8 @@ private:
 	Sprite sprite;
 	int* sortNumber;
 	Vector2f offset;
-
+	Text text;
+	Font font;
 
 	int MaxOfArray(int* array, int size);
 	void Timer(float speed);
@@ -30,7 +32,6 @@ private:
 	void Pause();
 	void Draw();
 	bool RestartSort();
-	
 
 	void BubbleSort(int reverse);
 
@@ -62,4 +63,5 @@ public:
 	int getNumberOfSort();
 	Vector2f getOffset();
 	Vector2f getResolution();
+	void setText(sf::String text);
 };

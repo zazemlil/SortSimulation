@@ -8,7 +8,7 @@ SortSimulation::SortSimulation(int* array, int size, float speed, Sprite sprite,
 	this->speed = speed;
 	this->array = array;
 	this->sprite = sprite;
-	this->sprite.setTextureRect(IntRect(300, 0, 10, 600));
+	this->sprite.setTextureRect(IntRect(300, 0, 10, 1));
 	this->window = window;
 	this->pause = pause;
 	this->control = control;
@@ -20,6 +20,12 @@ SortSimulation::SortSimulation(int* array, int size, float speed, Sprite sprite,
 	sizeofitemY = float(maxelem) / float(HEIGHT - sizeofheaderY);
 	offset.x = 0;
 	offset.y = 0;
+	font.loadFromFile("font.ttf");
+	text.setFont(font);
+	text.setCharacterSize(60);
+	text.setFillColor(Color::Red);
+	text.setStyle(sf::Text::Bold);
+	text.setPosition(5, -10);
 }
 
 void SortSimulation::Draw()
@@ -27,16 +33,16 @@ void SortSimulation::Draw()
 	window->clear(sf::Color::Cyan);
 	sizeofitemX = float(WIDTH - sizeofheaderX) / float(size);
 	sizeofitemY = float(maxelem) / float(HEIGHT - sizeofheaderY);
-	sprite.setScale(Vector2f(sizeofitemX / 25.f, sizeofitemY / 9.34f));
 	Vector2f v = sprite.getScale();
 	for (int i = 0; i < size; i++)
 	{
+		sprite.setScale(Vector2f(sizeofitemX / 25.f, 1 + *(array + i) / sizeofitemY));
 		sprite.setPosition(float(i) * v.x * 25.f + offset.x, float(HEIGHT) - *(array + i) / sizeofitemY + offset.y);
 		window->draw(sprite);
+		window->draw(text);
 	}
 	window->display();
 }
-
 
 void SortSimulation::update()
 {
@@ -79,13 +85,13 @@ void SortSimulation::Timer(float speed)
 
 void SortSimulation::setSizeOfHeaderX(float X)
 {
-	if (this->sizeofheaderX + X * float(WIDTH) / 1800.f <= float(WIDTH) / 1.1f && this->sizeofheaderX + X * float(WIDTH) / 1800.f >= 0)
+	if (this->sizeofheaderX + X * float(WIDTH) / 1800.f <= float(WIDTH) / 1.75f && this->sizeofheaderX + X * float(WIDTH) / 1800.f >= 0)
 		this->sizeofheaderX += X * float(WIDTH) / 1800.f;
 }
 
 void SortSimulation::setSizeOfHeaderY(float Y)
 {
-	if (this->sizeofheaderY + Y * float(HEIGHT) / 1800.f <= float(HEIGHT) / 1.1f && this->sizeofheaderY + Y * float(HEIGHT) / 1800.f >= 0)
+	if (this->sizeofheaderY + Y * float(HEIGHT) / 1800.f <= float(HEIGHT) / 1.75f && this->sizeofheaderY + Y * float(HEIGHT) / 1800.f >= 0)
 		this->sizeofheaderY += Y * float(HEIGHT) / 1800.f;
 }
 
@@ -125,6 +131,11 @@ Vector2f SortSimulation::getResolution()
 {
 	Vector2f vec(WIDTH, HEIGHT);
 	return vec;
+}
+
+void SortSimulation::setText(sf::String text)
+{
+	this->text.setString(text);
 }
 
 void SortSimulation::BubbleSort(int reverse)
@@ -586,7 +597,6 @@ void SortSimulation::Controller()
 				break;
 			}
 			f = 1;
-			//Timer(0.000001f);
 		}
 		else
 		{
@@ -615,7 +625,6 @@ void SortSimulation::Controller()
 				break;
 			}
 			f = 0;
-			//Timer(0.000001f);
 		}
 		*control = 0;
 		break;
