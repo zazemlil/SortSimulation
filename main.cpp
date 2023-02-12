@@ -81,37 +81,37 @@ int main()
 			control = 2;
 			continue;
 		}
-		if (Keyboard::isKeyPressed(Keyboard::Num1))
+		if (Keyboard::isKeyPressed(Keyboard::Num1) && !pause && control == 0)
 		{
 			sortNumber = 1;
 			continue;
 		}
-		if (Keyboard::isKeyPressed(Keyboard::Num2))
+		if (Keyboard::isKeyPressed(Keyboard::Num2) && !pause && control == 0)
 		{
 			sortNumber = 2;
 			continue;
 		}
-		if (Keyboard::isKeyPressed(Keyboard::Num3))
+		if (Keyboard::isKeyPressed(Keyboard::Num3) && !pause && control == 0)
 		{
 			sortNumber = 3;
 			continue;
 		}
-		if (Keyboard::isKeyPressed(Keyboard::Num4))
+		if (Keyboard::isKeyPressed(Keyboard::Num4) && !pause && control == 0)
 		{
 			sortNumber = 4;
 			continue;
 		}
-		if (Keyboard::isKeyPressed(Keyboard::Num5))
+		if (Keyboard::isKeyPressed(Keyboard::Num5) && !pause && control == 0)
 		{
 			sortNumber = 5;
 			continue;
 		}
-		if (Keyboard::isKeyPressed(Keyboard::Num6))
+		if (Keyboard::isKeyPressed(Keyboard::Num6) && !pause && control == 0)
 		{
 			sortNumber = 6;
 			continue;
 		}
-		if (Keyboard::isKeyPressed(Keyboard::Num7))
+		if (Keyboard::isKeyPressed(Keyboard::Num7) && !pause && control == 0)
 		{
 			sortNumber = 7;
 			continue;
