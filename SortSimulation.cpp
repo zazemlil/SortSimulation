@@ -1,6 +1,6 @@
 #include "SortSimulation.h"
 
-SortSimulation::SortSimulation(int* array, int size, float speed, Sprite sprite, RenderWindow* window, int WIDTH, int HEIGHT, bool* pause, int* control, int* sortNumber)
+SortSimulation::SortSimulation(int* array, int size, float* speed, int* step, Sprite sprite, RenderWindow* window, int WIDTH, int HEIGHT, bool* pause, int* control, int* sortNumber)
 {
 	this->WIDTH = WIDTH;
 	this->HEIGHT = HEIGHT;
@@ -13,6 +13,9 @@ SortSimulation::SortSimulation(int* array, int size, float speed, Sprite sprite,
 	this->pause = pause;
 	this->control = control;
 	this->sortNumber = sortNumber;
+	this->comparisons = new int;
+	this->step = step;
+	*comparisons = 0;
 	sizeofheaderX = 0.f;
 	sizeofheaderY = 0.f;
 	maxelem = MaxOfArray(array, size);
@@ -22,13 +25,27 @@ SortSimulation::SortSimulation(int* array, int size, float speed, Sprite sprite,
 	offset.y = 0;
 	font.loadFromFile("font.ttf");
 	text.setFont(font);
-	text.setCharacterSize(60);
+	text.setCharacterSize(40);
 	text.setFillColor(Color::Red);
 	text.setStyle(sf::Text::Bold);
-	text.setPosition(5, -10);
+	text.setPosition(5, -7);
+
+	Image itemImg;
+	itemImg.loadFromFile("line.png");
+	Texture itemTexture;
+	itemTexture.loadFromImage(itemImg);
+	Sprite itemSprite;
+	itemSprite.setTexture(itemTexture);
+	this->sprite = itemSprite;
+	this->sprite.setTextureRect(IntRect(300, 0, 10, 1));
 }
 
-void SortSimulation::Draw()
+SortSimulation::~SortSimulation()
+{
+	delete comparisons;
+}
+
+void SortSimulation::Draw(int a, int b)
 {
 	window->clear(sf::Color::Cyan);
 	sizeofitemX = float(WIDTH - sizeofheaderX) / float(size);
@@ -36,6 +53,10 @@ void SortSimulation::Draw()
 	Vector2f v = sprite.getScale();
 	for (int i = 0; i < size; i++)
 	{
+		if (a == i) sprite.setColor(sf::Color::Red);
+		else if (b == i) sprite.setColor(sf::Color::Green);
+		else sprite.setColor(sf::Color::Black);
+
 		sprite.setScale(Vector2f(sizeofitemX / 25.f, 1 + *(array + i) / sizeofitemY));
 		sprite.setPosition(float(i) * v.x * 25.f + offset.x, float(HEIGHT) - *(array + i) / sizeofitemY + offset.y);
 		window->draw(sprite);
@@ -43,6 +64,23 @@ void SortSimulation::Draw()
 	}
 	window->display();
 }
+
+//void SortSimulation::Draw()
+//{
+//	window->clear(sf::Color::Cyan);
+//	sizeofitemX = float(WIDTH - sizeofheaderX) / float(size);
+//	sizeofitemY = float(maxelem) / float(HEIGHT - sizeofheaderY);
+//	Vector2f v = sprite.getScale();
+//	for (int i = 0; i < size; i++)
+//	{
+//		sprite.setColor(sf::Color::Black);
+//		sprite.setScale(Vector2f(sizeofitemX / 25.f, 1 + *(array + i) / sizeofitemY));
+//		sprite.setPosition(float(i) * v.x * 25.f + offset.x, float(HEIGHT) - *(array + i) / sizeofitemY + offset.y);
+//		window->draw(sprite);
+//		window->draw(text);
+//	}
+//	window->display();
+//}
 
 void SortSimulation::update()
 {
@@ -54,8 +92,32 @@ void SortSimulation::update()
 
 void SortSimulation::Pause()
 {
+	static int stp = *step;
+	
+
 	while (*pause)
 	{
+		/*if (Keyboard::isKeyPressed(Keyboard::Right))
+		{
+			return;
+		}*/
+		int flag = 0;
+		if (stp - 1 >= 0)
+		{
+			stp--;
+			flag = 1;
+			return;
+		}
+		
+		while (Keyboard::isKeyPressed(Keyboard::Right))
+		{
+			if (stp <= 0) stp = *step;
+			//flag = 1;
+		}
+		if (flag == 1)
+		{
+			return;
+		}
 		std::this_thread::yield();
 		Draw();
 	}
@@ -71,12 +133,12 @@ int SortSimulation::MaxOfArray(int* array, int size)
 	return s;
 }
 
-void SortSimulation::Timer(float speed)
+void SortSimulation::Timer(float* speed)
 {
 	Clock clock;
 	float time = 0;
-	float x = 100000.f / speed;
-
+	//float x = 100000.f / *speed;
+	float x = 100000000.f / *speed;
 	while (time < x)
 	{
 		time += clock.getElapsedTime().asMicroseconds();
@@ -138,6 +200,11 @@ void SortSimulation::setText(sf::String text)
 	this->text.setString(text);
 }
 
+int* SortSimulation::getComp()
+{
+	return comparisons;
+}
+
 void SortSimulation::BubbleSort(int reverse)
 {
 	if (reverse == 1)
@@ -152,7 +219,9 @@ void SortSimulation::BubbleSort(int reverse)
 					*(array + i) = *(array + j);
 					*(array + j) = k;
 				}
-				Draw();
+				*comparisons += 1;
+				Draw(i, j);
+				//Draw();
 				Timer(speed);
 				Pause();
 				if (RestartSort()) return;
@@ -172,7 +241,9 @@ void SortSimulation::BubbleSort(int reverse)
 					*(array + i) = *(array + j);
 					*(array + j) = k;
 				}
-				Draw();
+				*comparisons += 1;
+				Draw(i, j);
+				//Draw();
 				Timer(speed);
 				Pause();
 				if (RestartSort()) return;
@@ -195,7 +266,8 @@ void SortSimulation::ChoiceSort(int reverse)
 				{
 					mn = j;
 				}
-				Draw();
+				*comparisons += 1;
+				Draw(i, j);
 				Timer(speed);
 				Pause();
 				if (RestartSort()) return;
@@ -216,7 +288,8 @@ void SortSimulation::ChoiceSort(int reverse)
 				{
 					mn = j;
 				}
-				Draw();
+				*comparisons += 1;
+				Draw(i, j);
 				Timer(speed);
 				Pause();
 				if (RestartSort()) return;
@@ -247,6 +320,7 @@ int SortSimulation::partition(int reverse, int start, int pivot)
 				pivot--;
 			}
 			else i++;
+			*comparisons += 1;
 			Draw();
 			Timer(speed);
 			Pause();
@@ -269,6 +343,7 @@ int SortSimulation::partition(int reverse, int start, int pivot)
 				pivot--;
 			}
 			else i++;
+			*comparisons += 1;
 			Draw();
 			Timer(speed);
 			Pause();
@@ -315,6 +390,7 @@ int SortSimulation::heapify(int reverse, int list[], int listLength, int root)
 		std::swap(list[root], list[largest]);
 		heapify(reverse, list, listLength, largest);
 	}
+	*comparisons += 1;
 	Draw();
 	Timer(speed);
 	Pause();
@@ -373,6 +449,7 @@ void SortSimulation::merge(int reverse, int array[], int const left, int const m
 				Pause();
 				if (RestartSort()) return;
 			}
+			*comparisons += 1;
 			indexOfMergedArray++;
 		}
 		while (indexOfSubArrayOne < subArrayOne)
@@ -418,6 +495,7 @@ void SortSimulation::merge(int reverse, int array[], int const left, int const m
 				Pause();
 				if (RestartSort()) return;
 			}
+			*comparisons += 1;
 			indexOfMergedArray++;
 		}
 		while (indexOfSubArrayOne < subArrayOne)
@@ -469,14 +547,16 @@ void SortSimulation::CocktailSort(int reverse, int a[], int n)
 		if (reverse == 0)
 		{
 			for (int i = start; i < end; ++i) {
-				if (a[i] > a[i + 1]) {
+				if (a[i] > a[i + 1]) 
+				{
 					std::swap(a[i], a[i + 1]);
 					swapped = true;
-					Draw();
+					Draw(i, i+1);
 					Timer(speed);
 					Pause();
 					if (RestartSort()) return;
 				}
+				*comparisons += 1;
 			}
 		}
 		else
@@ -485,11 +565,12 @@ void SortSimulation::CocktailSort(int reverse, int a[], int n)
 				if (a[i] < a[i + 1]) {
 					std::swap(a[i], a[i + 1]);
 					swapped = true;
-					Draw();
+					Draw(i, i+1);
 					Timer(speed);
 					Pause();
 					if (RestartSort()) return;
 				}
+				*comparisons += 1;
 			}
 		}
 		if (!swapped)
@@ -505,11 +586,12 @@ void SortSimulation::CocktailSort(int reverse, int a[], int n)
 				if (a[i] > a[i + 1]) {
 					std::swap(a[i], a[i + 1]);
 					swapped = true;
-					Draw();
+					Draw(i, i+1);
 					Timer(speed);
 					Pause();
 					if (RestartSort()) return;
 				}
+				*comparisons += 1;
 			}
 		}
 		else
@@ -518,11 +600,12 @@ void SortSimulation::CocktailSort(int reverse, int a[], int n)
 				if (a[i] < a[i + 1]) {
 					std::swap(a[i], a[i + 1]);
 					swapped = true;
-					Draw();
+					Draw(i, i+1);
 					Timer(speed);
 					Pause();
 					if (RestartSort()) return;
 				}
+				*comparisons += 1;
 			}
 		}
 		++start;
@@ -549,8 +632,10 @@ int SortSimulation::shuffle(int a[], int n)
 {
 	for (int i = 0; i < n; i++)
 	{
-		std::swap(a[i], a[rand() % n]);
-		Draw();
+		int j = rand() % n;
+		std::swap(a[i], a[j]);
+		*comparisons += 1;
+		Draw(i, j);
 		Timer(speed);
 		Pause();
 		if (RestartSort()) return -1;
@@ -570,6 +655,7 @@ void SortSimulation::Controller()
 	{
 	case 1:
 	{
+		*comparisons = 0;
 		if (f == 0)
 		{
 			switch (*sortNumber)

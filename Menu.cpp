@@ -35,28 +35,29 @@ void Menu::toCenter()
 
 void Menu::NameOfSort()
 {
+	int* nCmp = pSimulation->getComp();
 	switch (pSimulation->getNumberOfSort())
 	{
 	case 1:
-		text.setString("Bubble Sort");
+		text.setString("Bubble Sort     \t\tComparisons: " + std::to_string(*nCmp) + "\t" + (*speedRatio).substr(0,11));
 		break;
 	case 2:
-		text.setString("Choice Sort");
+		text.setString("Choice Sort     \t\tComparisons: " + std::to_string(*nCmp) + "\t" + (*speedRatio).substr(0, 11));
 		break;
 	case 3:
-		text.setString("Quick Sort");
+		text.setString("Quick Sort      \t\tComparisons: " + std::to_string(*nCmp) + "\t" + (*speedRatio).substr(0, 11));
 		break;
 	case 4:
-		text.setString("Heap Sort");
+		text.setString("Heap Sort       \t\tComparisons: " + std::to_string(*nCmp) + "\t" + (*speedRatio).substr(0, 11));
 		break;
 	case 5:
-		text.setString("Merge Sort");
+		text.setString("Merge Sort      \t\tComparisons: " + std::to_string(*nCmp) + "\t" + (*speedRatio).substr(0, 11));
 		break;
 	case 6:
-		text.setString("Cocktail Sort");
+		text.setString("Cocktail Sort   \t\tComparisons: " + std::to_string(*nCmp) + "\t" + (*speedRatio).substr(0, 11));
 		break;
 	case 7:
-		text.setString("Random sorting(");
+		text.setString("Random sorting( \t\tComparisons: " + std::to_string(*nCmp) + "\t" + (*speedRatio).substr(0, 11));
 		break;
 	default:
 		text.setString("NaN");
@@ -65,10 +66,11 @@ void Menu::NameOfSort()
 	pSimulation->setText(text.getString());
 }
 
-Menu::Menu(RenderWindow* window, SortSimulation* pSimulation)
+Menu::Menu(RenderWindow* window, SortSimulation* pSimulation, std::string* speedRatio)
 {
 	this->pSimulation = pSimulation;
 	this->window = window;
+	this->speedRatio = speedRatio;
 }
 
 void Menu::update()

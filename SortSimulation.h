@@ -10,7 +10,7 @@ class SortSimulation
 {
 private:
 	int size;
-	float speed;
+	float* speed;
 	int* array;
 	float sizeofitemX, sizeofitemY;
 	int maxelem;
@@ -25,12 +25,15 @@ private:
 	Vector2f offset;
 	Text text;
 	Font font;
+	int* comparisons;
+	int* step;
 
 	int MaxOfArray(int* array, int size);
-	void Timer(float speed);
+	void Timer(float* speed);
 	void Controller();
 	void Pause();
-	void Draw();
+	void Draw(int a = -1, int b = -1);
+	//void Draw();
 	bool RestartSort();
 
 	void BubbleSort(int reverse);
@@ -53,7 +56,8 @@ private:
 	void BogoSort(int reverse, int a[], int n);
 
 public:
-	SortSimulation(int* array, int size, float speed, Sprite sprite, RenderWindow* window, int WIDTH, int HEIGHT, bool* pause, int* control, int* sortNumber);
+	SortSimulation(int* array, int size, float* speed, int* step, Sprite sprite, RenderWindow* window, int WIDTH, int HEIGHT, bool* pause, int* control, int* sortNumber);
+	~SortSimulation();
 	void update();
 	void setSizeOfHeaderX(float X);
 	void setSizeOfHeaderY(float Y);
@@ -64,4 +68,5 @@ public:
 	Vector2f getOffset();
 	Vector2f getResolution();
 	void setText(sf::String text);
+	int* getComp();
 };
