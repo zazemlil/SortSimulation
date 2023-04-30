@@ -6,6 +6,19 @@
 
 using namespace sf;
 
+class SupportElements
+{
+	int* array;
+	int size;
+public:
+	SupportElements(int size);
+	~SupportElements();
+	void Clear();
+	void Clear(int index);
+	void SetElement(int index, int color);
+	int GetElement(int index);
+};
+
 class SortSimulation
 {
 private:
@@ -28,12 +41,13 @@ private:
 	int* comparisons;
 	int* step;
 
+	SupportElements* supportElem;
+
 	int MaxOfArray(int* array, int size);
 	void Timer(float* speed);
 	void Controller();
 	void Pause();
-	void Draw(int a = -1, int b = -1);
-	//void Draw();
+	void Draw();
 	bool RestartSort();
 
 	void BubbleSort(int reverse);

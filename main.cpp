@@ -4,6 +4,7 @@
 #include "SortSimulation.h"
 #include "Menu.h"
 #include <math.h>
+#include <Windows.h>
 
 using namespace sf;
 
@@ -14,6 +15,7 @@ const int HEIGHT = 800;
 
 int main()
 {
+	ShowWindow(GetConsoleWindow(), SW_HIDE);
 	ContextSettings settings;
 	settings.antialiasingLevel = 4;
 	RenderWindow window(VideoMode(WIDTH, HEIGHT), "SortSimulation", Style::Default, settings);
@@ -53,6 +55,7 @@ int main()
 			if (event.type == Event::Closed)
 			{
 				control = 2;
+				pause = false;
 				window.close();
 				mn.join();
 				t.join();
@@ -72,6 +75,7 @@ int main()
 		if (Keyboard::isKeyPressed(Keyboard::Escape))
 		{
 			control = 2;
+			pause = false;
 			window.close();
 			mn.join();
 			t.join();
